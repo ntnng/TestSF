@@ -21,7 +21,7 @@ runs:
   using: "composite"
   steps:
     - uses: octokit/request-action@v2.x
-      id: get-pr-details
+      id: request-pr-details
       with:
         route: GET /repos/{repo}/pulls/{pull_number}
         repo: ${{ inputs.repository }}
@@ -33,7 +33,7 @@ runs:
       id: get-pr-details
       shell: bash
       run: |
-        prDetails=$(echo '${{ steps.get-pr-details.outputs.data }}')
+        prDetails=$(echo '${{ steps.request-pr-details.outputs.data }}')
         headSha=$(echo $prDetails | jq -r '.head.sha')
         baseSha=$(echo $prDetails | jq -r '.base.sha')
         echo "headSha: $headSha"
