@@ -7,6 +7,10 @@ inputs:
   category:
     description: "Category"
     required: true
+  files:
+    description: "Files to scan"
+    required: false
+    default: "./"
   output-file:
     description: "Output file name"
     required: true
@@ -29,4 +33,4 @@ runs:
     - name: "Run SF Scanner"
       shell: bash
       run: |
-        sf scanner run --format ${{ inputs.scan-format }} --outfile ${{ inputs.output-file }} --target ./ --category ${{ inputs.category }}
+        sf scanner run --format ${{ inputs.scan-format }} --outfile ${{ inputs.output-file }} --target ${{ inputs.files }} --category ${{ inputs.category }}

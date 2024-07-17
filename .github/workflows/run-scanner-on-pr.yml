@@ -9,10 +9,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - id: pr-files
+        name: "Get PR Files"
+        uses: ./.github/actions/get-pr-files
+        with:
+          repository: ${{ github.repository }}
+          pr-number: ${{ github.event.pull_request.number }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: octokit/request-action@v2.x
         id: get-pr-files
         with:
-          route: GET /repos/{repo}/pulls/{pull_number}/files
+          route: GET /repos/{repo}/pulls/{pull_number}
           repo: ${{ github.repository }}
           pull_number: ${{ github.event.pull_request.number }}
         env:
