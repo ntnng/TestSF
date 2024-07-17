@@ -13,7 +13,7 @@ inputs:
 outputs:
   files:
     description: "PR files"
-    required: true
+    value: ${{ steps.get-pr-files.outputs.FILES }}
 runs:
   using: "composite"
   steps:
@@ -36,4 +36,4 @@ runs:
         baseSha=$(echo $prDetails | jq -r '.base.sha')
         echo "headSha: $headSha"
         echo "baseSha: $baseSha"
-        git diff --name-only $baseSha $headSha
+        git diff --name-only --diff-filter=d $baseSha $headSha
