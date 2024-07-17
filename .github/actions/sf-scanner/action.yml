@@ -19,6 +19,7 @@ runs:
         node-version: 20
 
     - name: "Install Salesforce CLI"
+      shell: bash
       run: |
         npm install @salesforce/cli --global
         sfdx --version
@@ -26,5 +27,6 @@ runs:
         sfdx plugins
 
     - name: "Run SF Scanner"
+      shell: bash
       run: |
         sf scanner run --format ${{ inputs.scan-format }} --outfile ${{ inputs.output-file }} --target ./ --category ${{ inputs.category }}
