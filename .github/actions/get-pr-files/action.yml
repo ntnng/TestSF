@@ -30,7 +30,6 @@ runs:
       id: get-pr-files
       shell: bash
       run: |
-        echo PR files: '${{ steps.get-pr-details.outputs.data }}'
         prDetails=$(echo '${{ steps.get-pr-details.outputs.data }}')
         headSha=$(echo $prDetails | jq -r '.head.sha')
         baseSha=$(echo $prDetails | jq -r '.base.sha')
