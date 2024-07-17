@@ -1,0 +1,39 @@
+name: Get PR Files
+description: Gets the files in a PR
+inputs:
+  repository:
+    description: "Repository name"
+    required: true
+  pr-number:
+    description: "Scan result format"
+    required: true
+  github-token:
+    description: "GitHub token"
+    required: true
+outputs:
+  files:
+    description: "PR files"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: octokit/request-action@v2.x
+      id: get-pr-details
+      with:
+        route: GET /repos/{repo}/pulls/{pull_number}
+        repo: ${{ inputs.repository }}
+        pull_number: ${{ inputs.pr-number }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+
+    - name: Get Files from PR
+      id: get-pr-files
+      shell: bash
+      run: |
+        echo PR files: '${{ steps.get-pr-details.outputs.data }}'
+        prDetails=$(echo '${{ steps.get-pr-details.outputs.data }}')
+        headSha=$(echo $prDetails | jq -r '.head.sha')
+        baseSha=$(echo $prDetails | jq -r '.base.sha')
+        echo "headSha: $headSha"
+        echo "baseSha: $baseSha"
+        git diff --name-only $baseSha $headSha
