@@ -29,8 +29,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: get_commits
         with:
-          route: GET /repos/{owner}/{repo}/commits
-          owner: ${{ github.repository_owner }}
+          route: GET /repos/{repo}/commits
           repo: ${{ github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
