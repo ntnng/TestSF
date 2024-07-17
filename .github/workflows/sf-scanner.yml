@@ -26,6 +26,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - uses: octokit/request-action@v2.x
+        id: get_commits
+        with:
+          route: GET /repos/{owner}/{repo}/commits
+          owner: ntnng
+          repo: TestSF
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: "echo latest release: '${{ steps.get_commits.outputs.data }}'"
+
       - name: "Setup Node"
         uses: actions/setup-node@v4
         with:
