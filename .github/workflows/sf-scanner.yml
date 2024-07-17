@@ -1,0 +1,49 @@
+name: SF Scanner
+on:
+  workflow_dispatch:
+    inputs:
+      file-format:
+        description: "File format of the scanner report"
+        default: "html"
+        type: choice
+        options:
+          - json
+          - csv
+          - html
+          - xml
+      category:
+        description: "Category of the scan"
+        default: "Security"
+        type: string
+jobs:
+  run-sf-scanner:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      FILE_FORMAT: ${{ inputs.file-format }}
+      CATEGORY: ${{ inputs.category }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: "Setup Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "Install Salesforce CLI"
+        run: |
+          npm install @salesforce/cli --global
+          sfdx --version
+          sf plugins install @salesforce/sfdx-scanner
+          sfdx plugins
+
+      - name: "Run SF Scanner"
+        run: |
+          sf scanner run --format ${{ env.FILE_FORMAT }} --outfile CodeAnalyzerGeneral.${{ env.FILE_FORMAT }} --target ./ --category ${{ env.CATEGORY }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SecurityReport${{ github.run_number }}
+          path: ${{ github.workspace }}/CodeAnalyzerGeneral.${{ env.FILE_FORMAT }}
+          retention-days: 7
