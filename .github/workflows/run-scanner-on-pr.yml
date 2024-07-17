@@ -1,0 +1,29 @@
+name: SF Scanner on PR
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+jobs:
+  analyze-code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: octokit/request-action@v2.x
+        id: get-pr-files
+        with:
+          route: GET /repos/{repo}/pulls/{pull_number}/files
+          repo: ${{ github.repository }}
+          pull_number: ${{ github.event.pull_request.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: "echo PR files: '${{ steps.get-pr-files.outputs.data }}'"
+
+      - id: run-sf-scanner
+        name: "Run Code Analyzer"
+        uses: ./.github/actions/sf-scanner
+        with:
+          scan-format: json
+          category: Security
+          output-file: CodeAnalyzerGeneral.json
