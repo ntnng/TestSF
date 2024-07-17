@@ -37,5 +37,7 @@ runs:
         git reflog
         echo "baseSha: $baseSha"
         difffiles=$(git diff --name-only --diff-filter=d $baseSha $headSha)
+        echo "difffiles: $difffiles"
         files=$(echo "$difffiles" | tr '\n' ',' | sed 's/,$//')
-        echo 'FILES=$(echo "$files")' >> $GITHUB_OUTPUT
+        echo "files: $files"
+        echo "FILES=$files" >> $GITHUB_OUTPUT
