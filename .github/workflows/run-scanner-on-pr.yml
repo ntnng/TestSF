@@ -31,4 +31,4 @@ jobs:
           files: ${{ steps.get-pr-details.outputs.files }}
           output-file: CodeAnalyzerGeneral.json
 
-      - run: "CodeAnalyzerGeneral.json: cat CodeAnalyzerGeneral.json"
+      - run: "CodeAnalyzerGeneral.json: less CodeAnalyzerGeneral.json"
