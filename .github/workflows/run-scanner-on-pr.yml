@@ -11,15 +11,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - id: get-pr-files
-        name: "Get PR Files"
-        uses: ./.github/actions/get-pr-files
+      - id: get-pr-details
+        name: "Get PR Details"
+        uses: ./.github/actions/get-pr-details
         with:
           repository: ${{ github.repository }}
           pr-number: ${{ github.event.pull_request.number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: "echo PR files: '${{ steps.get-pr-files.outputs.files }}'"
+      - run: "echo PR files: '${{ steps.get-pr-details.outputs.files }}'"
+      - run: "echo HEAD SHA: '${{ steps.get-pr-details.outputs.head-commit }}'"
 
       - id: run-sf-scanner
         name: "Run Code Analyzer"
@@ -27,5 +28,5 @@ jobs:
         with:
           scan-format: json
           category: Security
-          files: ${{ steps.get-pr-files.outputs.files }}
+          files: ${{ steps.get-pr-details.outputs.files }}
           output-file: CodeAnalyzerGeneral.json
