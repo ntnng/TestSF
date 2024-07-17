@@ -35,5 +35,6 @@ runs:
         headSha=$(echo $prDetails | jq -r '.head.sha')
         baseSha=$(echo $prDetails | jq -r '.base.sha')
         echo "headSha: $headSha"
+        git reflog
         echo "baseSha: $baseSha"
         git diff --name-only --diff-filter=d $baseSha $headSha
