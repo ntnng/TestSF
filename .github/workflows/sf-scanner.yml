@@ -25,7 +25,7 @@ jobs:
       - name: "Setup Node"
         uses: actions/setup-node@v4
         with:
-          node-version: latest
+          node-version: 21
 
       - name: Checkout code
         uses: actions/checkout@v4
