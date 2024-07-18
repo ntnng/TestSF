@@ -1,5 +1,5 @@
-name: Get PR Files
-description: Gets the files in a PR
+name: Get PR Details
+description: Gets the details of a PR
 inputs:
   repository:
     description: "Repository name"
@@ -13,12 +13,15 @@ inputs:
 outputs:
   files:
     description: "PR files"
-    value: ${{ steps.get-pr-files.outputs.FILES }}
+    value: ${{ steps.get-pr-details.outputs.FILES }}
+  head-commit:
+    description: "SHA of the head commit"
+    value: ${{ steps.get-pr-details.outputs.HEAD_SHA }}
 runs:
   using: "composite"
   steps:
     - uses: octokit/request-action@v2.x
-      id: get-pr-details
+      id: request-pr-details
       with:
         route: GET /repos/{repo}/pulls/{pull_number}
         repo: ${{ inputs.repository }}
@@ -26,14 +29,18 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
-    - name: Get Files from PR
-      id: get-pr-files
+    - name: Get Details from PR
+      id: get-pr-details
       shell: bash
       run: |
-        prDetails=$(echo '${{ steps.get-pr-details.outputs.data }}')
+        prDetails=$(echo '${{ steps.request-pr-details.outputs.data }}')
         headSha=$(echo $prDetails | jq -r '.head.sha')
         baseSha=$(echo $prDetails | jq -r '.base.sha')
         echo "headSha: $headSha"
-        git reflog
+        echo "HEAD_SHA=$headSha" >> $GITHUB_OUTPUT
         echo "baseSha: $baseSha"
-        git diff --name-only --diff-filter=d $baseSha $headSha
+        difffiles=$(git diff --name-only --diff-filter=d $baseSha $headSha)
+        echo "difffiles: $difffiles"
+        files=$(echo "$difffiles" | tr '\n' ',' | sed 's/,$//')
+        echo "files: $files"
+        echo "FILES=$files" >> $GITHUB_OUTPUT

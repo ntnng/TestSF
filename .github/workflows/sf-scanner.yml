@@ -22,10 +22,13 @@ jobs:
       FILE_FORMAT: ${{ inputs.file-format }}
       CATEGORY: ${{ inputs.category }}
     steps:
+      - name: "Setup Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: octokit/request-action@v2.x
         id: get_commits
